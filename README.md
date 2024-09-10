@@ -72,6 +72,7 @@ class MoodEntry(models.Model):
 * ### Membuat sebuah fungsi pada views.py 
 1. Tambahkan import render pada file `views.py` di folder main
 2. Menambahkan fungsi show_main dibawah impor untuk mengatur permintaan HTTP dan mengembalikan tampilan yang sesuai
+3. Isi fungsinya dengan `context` yaitu dictionary yg berisi data
 ```
 from django.shortcuts import render
 
@@ -86,19 +87,17 @@ def show_main(request):
 
     return render(request, "main.html", context)
 ```
-3. Isi fungsinya dengan `context` yaitu dictionary yg berisi data
 4. Return dengan format `return render(request, "main.html", context)`
 
 * ### Membuat sebuah routing pada urls.py aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py
-1. Tulis code 
+1. Tulis code di file `urls.py` di folder main
 ```app_name = 'main'
 
 urlpatterns = [
     path('', show_main, name='show_main'),
 ]
 ```
- di file `urls.py` di folder main
-2. Buka file `urls.py` di folder shopkint tambahkan from django.urls import path, include
+2. Buka file `urls.py` di folder shopkint tambahkan `from django.urls import path, include`
 3. Pada variabel urlpatterns isi dengan  `path('', include('main.urls')),`
 
 * ### Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
