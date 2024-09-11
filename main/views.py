@@ -6,7 +6,7 @@ def show_main(request):
         'name': 'Shabrina Aulia Kinanti',
         'npm' : '2306245472',
         'class': 'PBP B',
-        'pruct name' : 'Liptint',
+        'product_name' : 'Liptint',
         'price': '600.000',
         'description': 'NEW Liptint with high formula',
         'rating' : '4.5/5.0'
