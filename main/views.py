@@ -3,7 +3,10 @@ from django.shortcuts import render
 # Create your views here.
 def show_main(request):
     context = {
-        'name' : 'Liptint',
+        'name': 'Shabrina Aulia Kinanti',
+        'npm' : '2306245472',
+        'class': 'PBP B',
+        'pruct name' : 'Liptint',
         'price': '600.000',
         'description': 'NEW Liptint with high formula',
         'rating' : '4.5/5.0'
