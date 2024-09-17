@@ -1,3 +1,13 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>SHOPKINT</h1>
+<h5>Name: {{ name }}</h5>
+<h5>NPM: {{ npm }}</h5>
+<h5>Class: {{ class }}</h5>
+
+<!-- <h5>Product Name:</h5>
+=======
 <h1>SHOPKINT</h1>
 <h5>Name:</h5>
 <p>{{ name }}</p>
@@ -13,4 +23,38 @@
 <h5>Description:</h5>
 <p>{{ description }}</p>
 <h5>Rating:</h5>
+<p>{{ rating }}</p> -->
+
+{% if not product_entries %}
+<p>Belum ada data mengenai produk yang dijual.</p>
+{% else %}
+<table>
+  <tr>
+    <th>Product Name</th>
+    <th>Price</th>
+    <th>Description</th>
+    <th>Rating</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini 
+  {% endcomment %} 
+  {% for product_entry in product_entries %}
+  <tr>
+    <td>{{product_entry.product_name}}</td>
+    <td>{{product_entry.price}}</td>
+    <td>{{product_entry.description}}</td>
+    <td>{{product_entry.rating}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+
+<a href="{% url 'main:create_product_entry' %}">
+  <button>Add New Product</button>
+</a>
+{% endblock content %}
+=======
 <p>{{ rating }}</p>
+
