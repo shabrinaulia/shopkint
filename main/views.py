@@ -17,6 +17,11 @@ def show_main(request):
         # 'description': 'NEW Liptint with high formula',
         # 'rating' : '4.5/5.0',
         'product_entries': product_entries
+=======
+        'product_name' : 'Liptint',
+        'price': '600.000',
+        'description': 'NEW Liptint with high formula',
+        'rating' : '4.5/5.0'
     }
 
     return render(request, "main.html", context)
