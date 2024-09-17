@@ -135,6 +135,7 @@ berinteraksi dengan database menggunakan objek Python, bukan
 query SQL langsung. Setiap model merepresentasikan tabel dalam 
 database, dan ORM dapat melakukan operasi database seperti query, 
 insert, update, dan delete dengan metode python.
+</details>
 
 <details>
 <summary> <b> Tugas 3: Implementasi Form dan Data Delivery pada Django </b> </summary>
