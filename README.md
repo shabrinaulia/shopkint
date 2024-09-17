@@ -130,6 +130,206 @@ remote.
 3. Memiliki komunitas yang besar dan aktif sehingga mudah untuk mencari bantuan untuk masalah para pengguna.
 
 ## **Mengapa Model pada Django Disebut sebagai ORM?**
-Model pada Django disebut ORM karena memungkinkan pengembang berinteraksi dengan database menggunakan objek Python, bukan query SQL
-langsung. Setiap model merepresentasikan tabel dalam database, dan ORM dapat melakukan operasi database seperti query, insert, update, dan 
-delete dengan metode python.
+Model pada Django disebut ORM karena memungkinkan pengembang 
+berinteraksi dengan database menggunakan objek Python, bukan 
+query SQL langsung. Setiap model merepresentasikan tabel dalam 
+database, dan ORM dapat melakukan operasi database seperti query, 
+insert, update, dan delete dengan metode python.
+
+<details>
+<summary> <b> Tugas 3: Implementasi Form dan Data Delivery pada Django </b> </summary>
+
+## **Checklist Tugas**
+## **Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?**
+Data delivery merupakan proses pengiriman data antar berbagai 
+komponen sistem, baik antar server, antar aplikasi, maupun antara 
+klien dan server. Data delivery menjadi esensial karena tanpa 
+proses ini, komunikasi antara komponen-komponen dalam arsitektur 
+sistem tidak dapat berlangsung dengan baik. Alasan kita 
+memerlukan data delivery adalah:
+1. Interoperabilitas: Berbagai layanan dan aplikasi perlu saling 
+berbagi data untuk berfungsi dengan baik. Misalnya, API yang 
+menghubungkan frontend dengan backend atau aplikasi yang 
+berkomunikasi dengan layanan eksternal.
+2. Akses Data: Data yang dihasilkan atau diminta oleh pengguna 
+perlu dikirimkan dari server ke client atau sebaliknya untuk 
+menyediakan informasi yang dibutuhkan, seperti hasil pencarian, 
+produk yang ditampilkan, dll.
+3. Scalability: Dalam arsitektur microservices, data delivery 
+memungkinkan berbagai komponen bekerja secara terpisah dan 
+i-host pada server yang berbeda, yang meningkatkan skalabilitas 
+aplikasi.
+4. Sinkronisasi Data: Data delivery memungkinkan sinkronisasi 
+antara database, aplikasi, atau pengguna untuk memastikan data 
+yang dilihat atau diubah konsisten di seluruh platform.
+
+## **Manakah yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?**
+JSON umumnya dianggap lebih baik dalam konteks pertukaran data ringan, aplikasi web modern, dan API, terutama karena kesederhanaan, kecepatan, dan efisiensinya. XML tetap relevan untuk skenario yang memerlukan struktur data yang lebih kompleks dan validasi data yang ketat. Namun, untuk sebagian besar aplikasi berbasis web dan komunikasi data antara klien dan server, JSON lebih populer dan sering menjadi pilihan utama karena kemudahannya dalam penggunaan dan performa yang lebih cepat.
+
+## **Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?**
+Method `is_valid()` dalam Django digunakan untuk memeriksa apakah data yang dimasukkan ke dalam form sudah valid sesuai dengan aturan yang telah ditetapkan dalam form tersebut. Method ini penting karena memastikan bahwa data yang diterima sesuai dengan tipe dan format yang diharapkan, serta menangani kesalahan input pengguna dengan menyimpan data yang valid di `cleaned_data` dan memberikan pesan kesalahan pada atribut errors jika ada input yang tidak sesuai. Penggunaan `is_valid()` sangat krusial untuk mencegah bug dan error dalam aplikasi, menjaga keamanan dari serangan seperti injection atau XSS, serta memberikan pengalaman pengguna yang lebih baik dengan memberikan umpan balik atas kesalahan input. Validasi ini juga membantu memastikan bahwa hanya data yang valid dan aman yang diproses lebih lanjut oleh aplikasi.
+
+## **Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?**
+`{% csrf_token %}` adalah token yang berfungsi sebagai security. Token ini di-generate secara otomatis oleh Django untuk mencegah serangan berbahaya. Kita membutuhkan `csrf_token` saat membuat form di Django untuk melindungi aplikasi dari serangan Cross-Site Request Forgery (CSRF), di mana penyerang mencoba melakukan tindakan berbahaya atas nama pengguna tanpa sepengetahuan mereka.Jika kita tidak menambahkan `csrf_token`, aplikasi akan rentan terhadap serangan CSRF, memungkinkan penyerang mengirimkan permintaan atas nama pengguna yang telah login, seperti mengubah data atau melakukan transaksi berbahaya, tanpa terdeteksi sebagai tindakan ilegal oleh server. Token ini penting untuk menjaga keamanan dan integritas aplikasi Django.
+
+## **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+* ### Pembuatan Form dan Validasi dengan is_valid()
+1. Buat file baru `forms.py` lalu tambahkan code untuk membuat struktur form product
+```
+from django.forms import ModelForm
+from main.models import ProductEntry
+
+class ProductEntryForm(ModelForm):
+    class Meta:
+        model = ProductEntry
+        fields = ["product_name", "price", "description", "rating"]
+```
+2. Pada file `views.py` di folder main tambahkan 
+```
+from django.shortcuts import render, redirect
+from main.forms import ProductEntryForm
+from main.models import ProductEntry
+```
+lalu buat fungsi baru bernama `create_product_entry` yang menerima request, tambahkan code ini 
+```
+def create_product_entry(request):
+    form = MoodEntryForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_product_entry.html", context)
+```
+3. Sesuaikan fungsi `show_main` di `views.py` menjadi
+```
+def show_main(request):
+    mood_entries = MoodEntry.objects.all()
+    context = {
+        'name': 'Shabrina Aulia Kinanti',
+        'npm' : '2306245472',
+        'class': 'PBP B',
+        'mood_entries': mood_entries
+    }
+
+    return render(request, "main.html", context)
+```
+4. Pada file `urls.py` saya menambahkan `from main.views import show_main, create_product_entry` lalu menambahkan path url di file `urls.py` bagian urlpatterns `path('create-product-entry', create_product_entry, name='create_product_entry'),`
+5. Buat file HTML di bagian folder templates dengan nama `create_product_entry.html` berisi
+```
+{% extends 'base.html' %} 
+{% block content %}
+<h1>Add New Product Entry</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" value="Add New Product" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
+```
+6. Tambahkan code dibawah ini pada `main.html`serta tombol "Add New Product Entry" yang akan balik ke halaman form
+```
+{% if not product_entries %}
+<p>Belum ada data mengenai produk yang dijual.</p>
+{% else %}
+<table>
+  <tr>
+    <th>Product Name</th>
+    <th>Price</th>
+    <th>Description</th>
+    <th>Rating</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini 
+  {% endcomment %} 
+  {% for product_entry in product_entries %}
+  <tr>
+    <td>{{product_entry.product_name}}</td>
+    <td>{{product_entry.price}}</td>
+    <td>{{product_entry.description}}</td>
+    <td>{{product_entry.rating}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+
+<a href="{% url 'main:create_product_entry' %}">
+  <button>Add New Product</button>
+</a>
+{% endblock content %}
+```
+
+* ### Menambahkan 4 fungsi views baru untuk melihat objek yang sudah ditambahkan dalam format XML, JSON, XML by ID, dan JSON by ID.
+Menagembalikan Data dalam Bentuk XML dan JSOON
+1. Buka file `views.py` lalu tambahkan
+```
+from django.http import HttpResponse
+from django.core import serializers
+```
+2. Menambahkan fungsi `show_xml` yang akan mengembalikan `HttpResponse` berisi data yang sudah menjadi XML
+```
+def show_xml(request):
+    data = ProductEntry.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+```
+Lalu tambahkan fungsi `show_json` yang akan mengembalikan
+`HttpResponse` berisi data yang sudah menjadi JSON
+```
+def show_json(request):
+    data = ProductEntry.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+
+Mengembalikan Data dalam Bentuk XML dan JSON Berdasarkan ID
+1. Pada file `views.py` tambahkan fungsi `show_xml_by_id`yang akan mengembalikan `HttpResponse` berisi data yang sudah menjadi XML berdasarkan ID
+```
+def show_xml_by_id(request, id):
+    data = ProductEntry.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+```
+Lalu tambahkan fungsi `show_json_by_id`yang akan mengembalikan `HttpResponse` berisi data yang sudah menjadi JSON berdasarkan ID
+```
+def show_json_by_id(request, id):
+    data = ProductEntry.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+* ### Membuat Routing URL pada Masing-Masing Views yang Telah Ditambahkan
+1. Membuat routing URL setiap path di dalam `urlpatterns` menghubungkan URL yang spesifik dengan fungsi view tertentu sehingga bisa ditampilkan dalam format yang diminta (XML atau JSON) di `urls.py` yang berisi :
+```
+from django.urls import path
+from main.views import show_main, create_product_entry, show_xml, show_json, show_xml_by_id, show_json_by_id
+
+app_name = 'main'
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('create-product-entry', create_product_entry, name='create_product_entry'),
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+    path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
+]
+```
+2. Jalanakan proyek dengan `python manage.py runserver` lalu buka `http://localhost:8000/xml/[id]/` atau json untuk melihat proyek yang sudah dibuat
+
+## **Screenshot Hasil Akses URL pada Postman** 
+1. XML
+![xml](images/xml.png)
+2. JSON
+![json](images/json.png)
+3. XML by ID
+![xml](images/xml[id].png)
+4. JSON by ID
+![json](images/json[id].png)
