@@ -3,7 +3,7 @@
 **Nama : Shabrina Aulia Kinanti**
 **NPM : 2306245472**
 **Kelas : B**
-> **Shopkint:** http://shabrina-aulia31-shopkint2.pbp.cs.ui.ac.id
+> **Shopkint:** http://shabrina-aulia31-shopkint.pbp.cs.ui.ac.id
 
 ## **Penjelasan Tugas**
 <details>
