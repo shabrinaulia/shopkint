@@ -336,3 +336,141 @@ urlpatterns = [
 ![json](images/json[id].png)
 
 </details>
+
+<details>
+<summary> <b> Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django </b> </summary>
+
+## **Checklist Tugas**
+## **Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?**
+`UserCreationForm` adalah form bawaan Django yang digunakan untuk membuat user baru secara mudah. Form ini sudah menyediakan tiga field utama yang dibutuhkan untuk membuat user: username, password dan konfirmasi paassword.
+Kelebihan:
+1. Mudah digunakan karena sudah disediakan secara default oleh Django.
+2. Sudah dilengkapi dengan validasi password bawaan.
+3. Dapat dikustomisasi jika ingin menambahkan field atau logika validasi lainnya.
+Kekurangan:
+1. Cenderung terbatas jika aplikasi memerlukan form pendaftaran yang lebih kompleks atau field tambahan.
+2. Validasi password bawaan mungkin perlu disesuaikan untuk mengikuti standar keamanan tertentu.
+
+## **Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?**
+**Autentikasi (Authentication)** : Proses memverifikasi identitas pengguna. Pada Django, autentikasi digunakan untuk memastikan bahwa pengguna yang mengakses aplikasi benar-benar adalah siapa yang mereka klaim. Django menyediakan sistem autentikasi bawaan yang memungkinkan pengguna untuk login dan logout. Autentifikasi penting untuk mencegah akses oleh pengguna yang tidak dikenal atau tidak berwenang.
+**Otorisasi (Authorization)** : Proses menentukan apa yang diizinkan untuk dilakukan oleh pengguna setelah mereka terautentikasi. Dalam Django, otorisasi menentukan akses pengguna terhadap bagian tertentu dari aplikasi berdasarkan peran atau izin mereka (misalnya admin, user biasa, dsb.). Otorisasi penting untuk memastikan bahwa meskipun pengguna telah berhasil login, mereka hanya dapat mengakses bagian aplikasi yang diizinkan untuk mereka.
+
+## **Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?**
+**Cookies** adalah file kecil yang disimpan di browser pengguna yang berisi data yang berkaitan dengan sesi pengguna di aplikasi web agar server dapat mengenali pengguna pada setiap request. Django menggunakan session cookies untuk melacak sesi pengguna tanpa harus menyimpan semua data sesi di browser. Data sesi tersebut disimpan di server (misalnya, dalam database), sedangkan cookie yang disimpan di browser hanya berisi ID sesi yang unik. Dengan cara ini, Django dapat mengelola sesi secara aman dan efisien.
+
+## **Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?**
+Penggunaan cookies secara default dapat aman jika developer mengikuti praktik terbaik. Namun, pengunaan cookie juga tetap memilki risiko potensial seperti :
+1. Cross-Site Scripting (XSS): Serangan XSS dapat memungkinkan pencurian cookies dari pengguna jika tidak ada validasi input yang baik.
+2. Cross-Site Request Forgery (CSRF): Serangan CSRF dapat memungkinkan pihak ketiga untuk membuat request yang berbahaya atas nama pengguna. Django sudah menyertakan perlindungan CSRF secara default.
+3. Session Hijacking: Jika cookie tidak dienkripsi dengan baik, sesi pengguna bisa dicuri oleh pihak ketiga.
+
+## **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)**
+* ### Implemntasi User Creation Form
+1. Tambahkan import `UserCreationForm` dan `messages` pada file `views.py` di folder main
+```
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+```
+2. Tambahkan fungsi `register` masih di file yang sama 
+```
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+3. Membuat file baru bernama `register.html` di folder main bagian templates yang berisikan
+```
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+4. Menambahkan import fungsi register dan juga path urlnya di file `urls.py`
+```
+from main.views import register
+...
+ urlpatterns = [
+     ...
+     path('register/', register, name='register'),
+ ]
+```
+
+* ### Membuat autentifikasi dan otorisasi
+1. Saya membuat view login_user di `views.py` menggunakan AuthenticationForm dan metode authenticate serta login dari Django
+```
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
+
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+    else:
+        form = AuthenticationForm()
+    context = {'form': form}
+    return render(request, 'login.html', context)
+```
+2. Lalu untuk otorisasi saya menggunakan decorator login_required untuk membatasi akses halaman `show_main` hanya untuk user yang sudah login
+```
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='/login')
+def show_main(request):
+    context = {'name': request.user.username}
+    return render(request, 'main.html', context)
+```
+3. Saya melakukan pengujian login dan memastikan halaman utama tidak dapat diakses tanpa autentikasi
+
+* ### Pengelolaan Sesi dengan Cookies
+1. Setelah login, saya menambahkan cookie last_login untuk menyimpan data waktu terakhir login. Pada file `views.py` bagian login_user, saya mengubah response untuk menyertakan cookie
+```
+from django.http import HttpResponseRedirect
+import datetime
+
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+```
+2. Di file `views.py` pada bagian `show_main`, saya menambahkan context untuk menampilkan last_login dari cookies
+```
+def show_main(request):
+    context = {
+        'name': request.user.username,
+        'last_login': request.COOKIES.get('last_login', 'Unknown')
+    }
+    return render(request, 'main.html', context)
+```
+
+* ### Keamanan Cookies
+1. Saya memastikan bahwa cookie disetel dengan atribut `HttpOnly` dan `Secure` jika menggunakan HTTPS
+```
+response.set_cookie('last_login', str(datetime.datetime.now()), httponly=True, secure=True)
+```
+2. Lalu mengecek untuk memastikan cookie tidak dapat diakses oleh JavaScript dan hanya dikirim melalui koneksi HTTPS.
+
