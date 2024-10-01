@@ -1,0 +1,76 @@
+{% load static %}
+
+<!-- Navbar Utama: Gabungan Logo, Search Bar, Menu Items, Welcome, dan Logout -->
+<nav class="bg-white shadow-md fixed top-0 left-0 z-40 w-screen border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="#">
+                    <img src="{% static 'images/shopkint-logo.png' %}" alt="Shopkint Logo" class="h-14 w-auto">
+                </a>
+            </div>
+            <!-- Search Bar -->
+            <div class="hidden md:block flex-grow mx-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search..." class="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-[#72383D] focus:border-transparent">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.5 3.5a7.5 7.5 0 010 15z"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <!-- Menu Items -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Home</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Products</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Brands</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Categories</a>
+            </div>
+            <!-- Welcome Message and Logout for Desktop -->
+            <div class="hidden md:flex items-center space-x-8 ml-16"> <!-- Menambahkan margin left (ml-16) untuk jarak antara Categories dan Welcome -->
+                <span class="text-gray-600 flex items-center">Welcome, <span class="font-semibold text-[#72383D] ml-2">{{ user.username }}</span></span>
+                <a href="{% url 'main:logout' %}" class="text-center text-[#7E102C] border border-[#7E102C] hover:bg-[#7E102C] hover:text-white rounded-md px-4 py-2 text-sm font-medium">
+                    Logout
+                </a>
+            </div>
+            <!-- Hamburger menu button for Mobile -->
+            <div class="md:hidden flex items-center">
+                <button class="mobile-menu-button focus:outline-none">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu yang muncul ketika Hamburger ditekan -->
+<div class="mobile-menu hidden md:hidden px-4 w-full bg-white border-t border-gray-200 fixed top-16 shadow-lg z-40 h-auto max-h-[70vh] overflow-y-auto">
+    <div class="pt-2 pb-3 space-y-1 mx-auto">
+        <a href="{% url 'main:show_main' %}" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Home</a>
+        <a href="{% url 'main:show_main' %}" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Products</a>
+        <a href="{% url 'main:show_main' %}" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Brands</a>
+        <a href="{% url 'main:show_main' %}" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Categories</a>
+        <!-- Welcome Message and Logout for Mobile -->
+        <div class="mt-4 border-t border-gray-200 pt-4">
+            <span class="block text-gray-600">Welcome, <span class="font-semibold" style="color: #7E102C;">{{ user.username }}</span></span>
+            <a href="{% url 'main:logout' %}" class="block text-center text-[#7E102C] border border-[#7E102C] hover:bg-[#7E102C] hover:text-white rounded-md px-4 py-2 text-sm font-medium mt-4">
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Script untuk Toggle Menu Mobile -->
+<script>
+    // Toggle Mobile Menu
+    const btn = document.querySelector("button.mobile-menu-button");
+    const menu = document.querySelector(".mobile-menu");
+
+    btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+    });
+</script>

@@ -9,3 +9,4 @@ class ProductEntry(models.Model):
     price = models.IntegerField()
     description = models.TextField()
     rating = models.IntegerField()
+    image = models.ImageField(upload_to='product_images/', null=True, blank=True)

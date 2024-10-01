@@ -538,3 +538,337 @@ response.set_cookie('last_login', str(datetime.datetime.now()), httponly=True, s
 ```
 2. Lalu mengecek untuk memastikan cookie tidak dapat diakses oleh JavaScript dan hanya dikirim melalui koneksi HTTPS.
 
+</details>
+
+<details>
+<summary> <b> Tugas 5: Desain Web menggunakan HTML, CSS dan Framework CSS </b> </summary>
+
+## **Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!**
+1. Inline Style (prioritas tertinggi): CSS yang ditulis langsung pada atribut style di elemen HTML. Contoh : `<p style="color: red;">Teks ini berwarna merah.</p>`
+2. ID Selector: Selector yang menggunakan ID dari elemen. Contoh: `#main { color: blue; }`
+3. Class Selector, Attribute Selector, dan Pseudo-Class Selector: Selector yang menggunakan class, atribut, atau pseudo-class seperti :hover. Contoh: 
+```
+.text { font-size: 16px; }
+[type="text"] { color: green; }
+p:hover { font-weight: bold; }
+```
+4. Element Selector dan Pseudo-Element Selector: Selector yang hanya menggunakan tag HTML seperti <p>, <div>, atau pseudo-element seperti ::before. Contoh: `p { margin: 20px; }`
+
+## **Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!**
+Responsive design adalah konsep dalam pengembangan web yang memastikan bahwa tampilan dan layout situs web dapat menyesuaikan dengan baik pada berbagai ukuran layar dan perangkat, mulai dari desktop hingga perangkat mobile. Responsive design penting karena:
+1. Pengalaman Pengguna (User Experience): Pengguna dapat melihat dan mengakses konten dengan nyaman tanpa perlu zoom in/out atau scroll ke samping.
+2. SEO (Search Engine Optimization): Google dan mesin pencari lain memprioritaskan situs web yang responsif karena mereka memberikan pengalaman pengguna yang lebih baik.
+3. Aksesibilitas: Situs web dapat diakses di berbagai perangkat seperti smartphone, tablet, dan komputer, sehingga meningkatkan jangkauan pengunjung.
+
+Aplikasi yang menerapkan responsive design :
+- Google.com: Memiliki tampilan yang konsisten dan mudah digunakan pada semua ukuran layar.
+- Medium.com: Mengatur tata letak teks dan gambar agar nyaman dibaca baik di layar kecil maupun besar.
+
+Aplikasi yang belum menerapkan responsive design :
+- ZARA : website ZARA sering kali dikritik karena navigasi yang rumit dan tidak intuitif, terutama pada perangkat mobile.
+- eBay : Teks dan elemen UI terkadang terlihat terlalu kecil, dan beberapa tombol tidak berfungsi dengan baik di layar kecil​
+
+## **Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!**
+1. Margin: Jarak antara elemen dengan elemen di sekitarnya. Margin berfungsi untuk memberi ruang di luar border elemen tersebut
+```
+.element {
+  margin: 20px; /* Menambahkan jarak 20px di luar elemen */
+}
+```
+2. Border: Garis tepi yang mengelilingi elemen. Border memisahkan padding dan margin dari elemen.
+```
+.element {
+  border: 2px solid black; /* Border tebal 2px berwarna hitam */
+}
+```
+3. Padding: Ruang di dalam elemen, antara konten (teks/gambar) dan border elemen.
+```
+.element {
+  padding: 15px; /* Menambahkan ruang 15px di dalam elemen */
+}
+```
+**Contoh Implementasi Margin, Border, dan Padding**
+```
+<div style="margin: 20px; border: 2px solid black; padding: 15px;">
+  Ini adalah contoh elemen dengan margin, border, dan padding.
+</div>
+```
+
+## **Jelaskan konsep flex box dan grid layout beserta kegunaannya!**
+- Flexbox adalah model layout satu dimensi (searah horizontal atau vertikal) yang memungkinkan Anda mengatur tata letak dan distribusi elemen di dalam container dengan fleksibel. Flexbox memudahkan pengaturan alignment (perataan), direction (arah), dan spacing (jarak antar elemen). Kegunaan Flexbox ideal untuk membuat layout yang fleksibel dan responsif seperti navbar, form, atau elemen grid sederhana. Contoh implementasi :
+```
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+```
+
+- Grid Layout adalah model layout dua dimensi yang memungkinkan Anda untuk membagi halaman menjadi kolom dan baris. Grid layout lebih cocok untuk membuat layout yang kompleks seperti dashboard atau halaman dengan beberapa section. Kegunaan Grid layout memungkinkan untuk pengaturan yang lebih kompleks dan terstruktur, seperti layout magazine atau layout card. Contoh implementasi :
+```
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+}
+```
+
+## **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!**
+* ### Implementasi fungsi menghapus dan mengedit
+1. Tambahkan code dibawah ini di file `views.py`
+```
+def edit_mood(request, id):
+    # Get mood entry berdasarkan id
+    mood = MoodEntry.objects.get(pk = id)
+
+    # Set mood entry sebagai instance dari form
+    form = MoodEntryForm(request.POST or None, instance=mood)
+
+    if form.is_valid() and request.method == "POST":
+        # Simpan form dan kembali ke halaman awal
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_mood.html", context)
+```
+2. Buat file baru di main/templates bernama `edit_product.html` lalau isi dengan code dibawah
+```
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h1>Edit Mood</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Edit Mood"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+```
+3. Import `edit_mood` di `urls.py` jangan lupa juga untuk menambahkan pathnya
+**hapus**
+1. Tambahkan fungsi `delete_mood` di `views.py`
+```
+def delete_mood(request, id):
+    # Get mood berdasarkan id
+    mood = MoodEntry.objects.get(pk = id)
+    # Hapus mood
+    mood.delete()
+    # Kembali ke halaman awal
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+2. Import `delet_mood` dan tambahkan path url nya juga 
+3. Di `main.html` tambahkan button yang bisa mengedit dan menghapusnya
+```
+...
+<tr>
+    ...
+    <td>
+        <a href="{% url 'main:edit_mood' mood_entry.pk %}">
+            <button>
+                Edit
+            </button>
+        </a>
+    </td>
+    <td>
+        <a href="{% url 'main:delete_mood' mood_entry.pk %}">
+            <button>
+                Delete
+            </button>
+        </a>
+    </td>
+</tr>
+```
+
+* ### Kustomisasi halaman login, register dan tambah product
+1. Saya menggunkan tailwind sehingga tambahin dulu tailwind ke aplikasinya di base.html
+```
+<head>
+{% block meta %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock meta %}
+<script src="https://cdn.tailwindcss.com">
+</script>
+</head>
+```
+2. Membuat file `login.html` untuk melakukan stylingnya
+```
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<!-- Container Utama dengan Background dan Flexbox -->
+<div class="min-h-screen flex items-center justify-center w-screen bg-gradient-to-r from-[#EFE9E1] to-[#AC9C8D] relative">
+  <!-- Bagian Kiri: Form Login -->
+  <div class="flex flex-col justify-center items-center p-8 bg-white shadow-lg rounded-lg z-10 max-w-md w-full">
+    <h2 class="mt-2 mb-4 text-3xl font-extrabold text-gray-800">
+      Login to your account
+    </h2>
+    <form class="mt-8 space-y-6 w-full" method="POST" action="">
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label for="username" class="sr-only">Username</label>
+          <input id="username" name="username" type="text" required class="appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#322D29] focus:border-transparent" placeholder="Username">
+        </div>
+        <div>
+          <label for="password" class="sr-only">Password</label>
+          <input id="password" name="password" type="password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#322D29] focus:border-transparent" placeholder="Password">
+        </div>
+      </div>
+      <!-- Tombol Login -->
+      <div>
+        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#72383D] hover:bg-[#AC9C8D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#322D29] transition duration-150 ease-in-out">
+          Sign in
+        </button>
+      </div>
+    </form>
+    <!-- Pesan Kesalahan -->
+    {% if messages %}
+    <div class="mt-4 w-full">
+      {% for message in messages %}
+      <div class="p-4 rounded-md {{ message.tags }} bg-red-100 border border-red-400 text-red-700">
+        <span class="block sm:inline">{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <!-- Link ke Register -->
+    <div class="text-center mt-4">
+      <p class="text-sm text-[#322D29]">
+        Don't have an account yet?
+        <a href="{% url 'main:register' %}" class="font-medium text-[#72383D] hover:text-[#AC9C8D]">
+          Register Now
+        </a>
+      </p>
+    </div>
+  </div>
+  
+  <!-- Bagian Kanan: Background Gambar -->
+  <div class="hidden md:block md:w-1/2 h-screen absolute right-0 top-0">
+    <img src="{% static 'images/bg-login.png' %}" alt="bg-login" class="w-full h-full object-cover rounded-l-lg shadow-lg">
+  </div>
+</div>
+{% endblock content %}
+```
+3. Untuk register juga sama membuat file baru bernama `register.html` di main/templates/ Setelah pengguna berhasil mendaftar, redirect ke halaman login.
+4. Menambah product pertama-tama desain form untuk menambah produk agar terlihat lebih menarik, Tambahkan input untuk meng-upload gambar produk dan pastikan tampil di preview sebelum disimpan.
+
+* ### Kustomisasi Halaman Daftar Produk
+1. Ubah tampilan daftar produk menggunakan card untuk setiap produk. Setiap card harus memiliki:
+Gambar produk
+Nama produk
+Deskripsi produk
+Dua tombol untuk edit dan delete produk.
+2. Jika tidak ada produk, tampilkan pesan yang menyatakan bahwa tidak ada produk yang terdaftar dan sertakan gambar sedih (misalnya, icon).
+3. Memastikan semua elemen dapat menyesuaikan ukuran layar, baik di desktop maupun mobile.
+
+* ### Membuat dua button untuk mengedit dan menghapus
+1. Menambahkan dua button
+```
+<div class="flex space-x-2">
+  <a href="{% url 'main:edit_product' product_entry.pk %}" class="w-full text-center bg-[#72383D] hover:bg-[#AC9C8B] text-white py-1 px-2 rounded-md transition duration-200 text-xs"> <!-- Kurangi padding tombol -->
+      Edit
+  </a>
+  <a href="{% url 'main:delete_product' product_entry.pk %}" class="w-full text-center bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md transition duration-200 text-xs"> <!-- Kurangi padding tombol -->
+      Delete
+  </a>
+</div>
+```
+
+* ### Membuat Navigation Bar
+1. Membuat navigation bar yang responsif untuk desktop dan juga mobile
+```
+{% load static %}
+
+<!-- Navbar Utama: Gabungan Logo, Search Bar, Menu Items, Welcome, dan Logout -->
+<nav class="bg-white shadow-md fixed top-0 left-0 z-40 w-screen border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="#">
+                    <img src="{% static 'images/shopkint-logo.png' %}" alt="Shopkint Logo" class="h-14 w-auto">
+                </a>
+            </div>
+            <!-- Search Bar -->
+            <div class="hidden md:block flex-grow mx-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search..." class="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-[#72383D] focus:border-transparent">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.5 3.5a7.5 7.5 0 010 15z"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <!-- Menu Items -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Home</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Products</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Brands</a>
+                <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-[#72383D] px-3 py-2 text-sm font-medium">Categories</a>
+            </div>
+            <!-- Welcome Message and Logout for Desktop -->
+            <div class="hidden md:flex items-center space-x-8 ml-16"> <!-- Menambahkan margin left (ml-16) untuk jarak antara Categories dan Welcome -->
+                <span class="text-gray-600 flex items-center">Welcome, <span class="font-semibold text-[#72383D] ml-2">{{ user.username }}</span></span>
+                <a href="{% url 'main:logout' %}" class="text-center text-[#7E102C] border border-[#7E102C] hover:bg-[#7E102C] hover:text-white rounded-md px-4 py-2 text-sm font-medium">
+                    Logout
+                </a>
+            </div>
+            <!-- Hamburger menu button for Mobile -->
+            <div class="md:hidden flex items-center">
+                <button class="mobile-menu-button focus:outline-none">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu yang muncul ketika Hamburger ditekan -->
+<div class="mobile-menu hidden md:hidden px-4 w-full bg-white border-t border-gray-200 fixed top-16 shadow-lg z-40 h-auto max-h-[70vh] overflow-y-auto">
+    <div class="pt-2 pb-3 space-y-1 mx-auto">
+        <a href="#" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Home</a>
+        <a href="#" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Products</a>
+        <a href="#" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Brands</a>
+        <a href="#" class="block text-gray-600 px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100">Categories</a>
+        <!-- Welcome Message and Logout for Mobile -->
+        <div class="mt-4 border-t border-gray-200 pt-4">
+            <span class="block text-gray-600">Welcome, <span class="font-semibold" style="color: #7E102C;">{{ user.username }}</span></span>
+            <a href="{% url 'main:logout' %}" class="block text-center text-[#7E102C] border border-[#7E102C] hover:bg-[#7E102C] hover:text-white rounded-md px-4 py-2 text-sm font-medium mt-4">
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Script untuk Toggle Menu Mobile -->
+<script>
+    // Toggle Mobile Menu
+    const btn = document.querySelector("button.mobile-menu-button");
+    const menu = document.querySelector(".mobile-menu");
+
+    btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+    });
+</script>
+```

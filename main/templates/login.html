@@ -1,32 +1,61 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
 <title>Login</title>
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
-
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
-
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+<!-- Container Utama dengan Background dan Flexbox -->
+<div class="min-h-screen flex items-center justify-center w-screen bg-gradient-to-r from-[#EFE9E1] to-[#AC9C8D] relative">
+  <!-- Bagian Kiri: Form Login -->
+  <div class="flex flex-col justify-center items-center p-8 bg-white shadow-lg rounded-lg z-10 max-w-md w-full">
+    <h2 class="mt-2 mb-4 text-3xl font-extrabold text-gray-800">
+      Login to your account
+    </h2>
+    <form class="mt-8 space-y-6 w-full" method="POST" action="">
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label for="username" class="sr-only">Username</label>
+          <input id="username" name="username" type="text" required class="appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#322D29] focus:border-transparent" placeholder="Username">
+        </div>
+        <div>
+          <label for="password" class="sr-only">Password</label>
+          <input id="password" name="password" type="password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#322D29] focus:border-transparent" placeholder="Password">
+        </div>
+      </div>
+      <!-- Tombol Login -->
+      <div>
+        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#72383D] hover:bg-[#AC9C8D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#322D29] transition duration-150 ease-in-out">
+          Sign in
+        </button>
+      </div>
+    </form>
+    <!-- Pesan Kesalahan -->
+    {% if messages %}
+    <div class="mt-4 w-full">
+      {% for message in messages %}
+      <div class="p-4 rounded-md {{ message.tags }} bg-red-100 border border-red-400 text-red-700">
+        <span class="block sm:inline">{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <!-- Link ke Register -->
+    <div class="text-center mt-4">
+      <p class="text-sm text-[#322D29]">
+        Don't have an account yet?
+        <a href="{% url 'main:register' %}" class="font-medium text-[#72383D] hover:text-[#AC9C8D]">
+          Register Now
+        </a>
+      </p>
+    </div>
+  </div>
+  
+  <!-- Bagian Kanan: Background Gambar -->
+  <div class="hidden md:block md:w-1/2 h-screen absolute right-0 top-0">
+    <img src="{% static 'images/bg-login.png' %}" alt="bg-login" class="w-full h-full object-cover rounded-l-lg shadow-lg">
+  </div>
 </div>
-
 {% endblock content %}

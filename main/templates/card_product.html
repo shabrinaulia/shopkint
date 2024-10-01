@@ -1,0 +1,44 @@
+<!-- Container untuk semua kartu produk -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto p-6">
+    <!-- Loop untuk setiap produk -->
+    {% for product_entry in product_entries %}
+    <div class="bg-white border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+        <!-- Gambar Produk -->
+        <div class="relative h-48 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+            <img src="{{ product_entry.image.url }}" alt="{{ product_entry.product_name }}" class="object-contain max-h-full">
+            <!-- Tombol favorit, jika diperlukan -->
+            <button class="absolute top-2 right-2 bg-white p-1 rounded-full shadow">
+                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.2 3.674a1 1 0 00.95.69h3.862c.969 0 1.371 1.24.588 1.81l-3.122 2.223a1 1 0 00-.364 1.118l1.2 3.674c.3.921-.755 1.688-1.54 1.118l-3.122-2.223a1 1 0 00-1.176 0l-3.122 2.223c-.784.57-1.838-.197-1.54-1.118l1.2-3.674a1 1 0 00-.364-1.118L2.76 9.101c-.783-.57-.38-1.81.588-1.81h3.861a1 1 0 00.951-.69l1.2-3.674z"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Informasi Produk -->
+        <div class="mt-4">
+            <!-- Nama Produk dan Harga -->
+            <div class="flex justify-between items-center mb-1">
+                <h3 class="text-lg font-semibold text-gray-800">{{ product_entry.product_name }}</h3>
+                <span class="text-lg font-bold text-[#72383D]">${{ product_entry.price }}</span>
+            </div>
+            <!-- Deskripsi Produk -->
+            <p class="text-sm text-gray-500 mb-2">{{ product_entry.description }}</p>
+            <!-- Rating Produk -->
+            <div class="flex items-center mb-4">
+                <span class="flex items-center text-yellow-500">
+                    {% for i in range(product_entry.rating) %}
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.2 3.674a1 1 0 00.95.69h3.862c.969 0 1.371 1.24.588 1.81l-3.122 2.223a1 1 0 00-.364 1.118l1.2 3.674c.3.921-.755 1.688-1.54 1.118l-3.122-2.223a1 1 0 00-1.176 0l-3.122 2.223c-.784.57-1.838-.197-1.54-1.118l1.2-3.674a1 1 0 00-.364-1.118L2.76 9.101c-.783-.57-.38-1.81.588-1.81h3.861a1 1 0 00.951-.69l1.2-3.674z"/>
+                    </svg>
+                    {% endfor %}
+                </span>
+                <span class="ml-2 text-sm text-gray-500">({{ product_entry.rating_count }})</span>
+            </div>
+            <!-- Tombol Add to Cart -->
+            <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition duration-300">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
